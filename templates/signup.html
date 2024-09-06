@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Sign Up
+{% endblock %}
+
+{% block content %}
+    <div style="display: flex; background-image: url('static/img/login-signup-bg-upscaled.png'); background-size: cover; background-position: center; height: calc(100vh - 56px);">
+        <div class="col ms-auto" style="flex: 1 1 20%;">
+            <!-- <img src="{{ url_for('static', path='img/login-signup-bg.png') }}" style="height: 100vh; width: 55vw; float: right;"> -->
+        </div>
+        <div class="col me-auto d-flex justify-content-center align-items-center" style="flex: 1 1 60%; word-wrap: break-word; background-color: var(--primary-dark);border-radius: 25px; margin-top: 10px; margin-bottom: 10px;">
+            <div class="container-fluid" style="margin: 60px;">
+                <h2 style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: var(--primary-light); margin-bottom: 24px;">
+                    Sign Up
+                </h2>
+                <h4 style="font-family: var(--secondary-font-family); font-weight:200; color: var(--primary-light); margin-bottom: 18px;">
+                    "The world is a big and wonderful place, and there's so much to see and do. So get out there and explore!"
+                </h4>
+                <!-- <h4 style="font-family: var(--secondary-font-family); font-weight:var(--font-weight-light); color: var(--primary-light); margin-bottom: 24px;">
+                    - St. Augustine
+                </h4> -->
+                <!-- <form action="/signup" method="POST" enctype="multipart/form-data"> -->
+                <form action="{{ url_for('post_signup') }}" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3" style="display: flex;">
+                        <!-- <label for="usernameinput" class="form-label" style="color: var(--primary-light);">Username</label> -->
+                        <input type="text" class="form-control form-input-custom me-3 input-text-custom" id="usernameinput" aria-describedby="usernameHelp" placeholder="Username" name="username" required>
+                        <!-- <div id="usernameHelp" class="form-text" style="color: var(--primary-light);">People can find you by your username.</div> -->
+
+                        <!-- <label for="fullnameinput" class="form-label" style="color: var(--primary-light);">Full Name</label> -->
+                        <input type="text" class="form-control form-input-custom ms-3 input-text-custom" id="fullnameinput" aria-describedby="fullnameHelp" placeholder="Full Name" name="fullname" required>
+                        <!-- <div id="fullnameHelp" class="form-text" style="color: var(--primary-light);">People can find you by your full name.</div> -->
+                    </div>
+                    <div class="mb-3" style="display: flex;">
+                        <!-- <label for="emailidinput" class="form-label" style="color: var(--primary-light);">Email address</label> -->
+                        <input type="email" class="form-control form-input-custom me-3 input-text-custom" id="emailidinput" aria-describedby="emailHelp" placeholder="Email ID" name="email" required>
+                        <!-- <div id="emailHelp" class="form-text" style="color: var(--primary-light);">We'll never share your email with anyone else.</div> -->
+
+                        <!-- <label for="contactnoinput" class="form-label" style="color: var(--primary-light);">Email address</label> -->
+                        <input type="number" class="form-control form-input-custom ms-3 input-text-custom" id="contactnoinput" placeholder="Contact No" name="contact" required>
+                    </div>
+                    <div class="mb-3" style="display: flex;">
+                        <!-- <label for="addressinput" class="form-label" style="color: var(--primary-light);">Date of Birth</label> -->
+                        <textarea class="form-control form-input-custom me-3 input-text-custom" style="flex: 1 1 50%;" id="addressinput" rows="3" cols="3" placeholder="Address" name="address" required></textarea>
+
+                        <div class="ms-3" style="flex: 1 1 50%;">
+                            <!-- <label for="regioninput" class="form-label" style="color: var(--primary-light);">Region</label> -->
+                            <select class="form-control form-input-custom mb-3 input-text-custom" id="regioninput" name="region" required>
+                                <option value="region" selected disabled>Region</option>
+                                <option value="north america">North America</option>
+                                <option value="south america">South America</option>
+                                <option value="europe">Europe</option>
+                                <option value="asia">Asia</option>
+                                <option value="africa">Africa</option>
+                                <option value="australia">Australia</option>
+                            </select>
+
+                            <!-- <label for="aadharcardinput" class="form-label" style="color: var(--primary-light);">Date of Birth</label> -->
+                            <input type="file" class="form-control form-input-custom mt-3 input-text-custom" id="aadharcardinput" placeholder="Aadhar Card" name="aadharcard">
+                        </div>
+                        <!-- <fieldset class="form-control ms-3">
+                        <div class="container ms-3">
+                            <h5 style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: var(--primary-light); margin-bottom: 32px;">Gender</h5>
+
+                            <div class="container" style="display: inline-flex;">
+                                <input type="radio" id="male" name="sex" value="male">
+                                <label for="male" class="form-label text-light" style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: var(--primary-light); margin-bottom: 32px;">Male</label>
+                                
+                                <input type="radio" id="female" name="sex" value="female">
+                                <label for="female" class="form-label text-light" style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: var(--primary-light); margin-bottom: 32px;">Female</label>
+                            </div>
+                            
+                            <div class="container" style="display: inline-flex;">
+                                <input type="radio" id="other" name="sex" value="other">
+                                <label for="other" class="form-label text-light" style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: var(--primary-light); margin-bottom: 32px;">Other</label>
+                                
+                                <input type="radio" id="unspecified" name="sex" value="unspecified">
+                                <label for="unspecified" class="form-label text-light" style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: var(--primary-light); margin-bottom: 32px;">Rather Not Say</label>
+                            </div>
+                        </div>
+                        </fieldset> -->
+                    </div>
+                    <div class="mb-3" style="display: flex;">
+                        <!-- <label for="dobinput" class="form-label" style="color: var(--primary-light);">Date of Birth</label> -->
+                        <input type="date" class="form-control form-input-custom me-3 input-text-custom" id="dobinput" placeholder="Date of Birth" name="dob" required>
+
+                        <!-- <label for="genderinput" class="form-label" style="color: var(--primary-light);">Gender</label> -->
+                        <select class="form-control form-input-custom ms-3 input-text-custom" id="genderinput" name="gender" style="height: min-content" required>
+                            <option value="gender" selected disabled>Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="unspecified">Rather Not Say</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" style="display: flex;">
+                        <!-- <label for="passwordinput" class="form-label" style="color: var(--primary-light);">Password</label> -->
+                        <input type="password" class="form-control form-input-custom me-3 input-text-custom" id="passwordinput" placeholder="Password" name="password" required>
+
+                        <!-- <label for="confirmpasswordinput" class="form-label" style="color: var(--primary-light);">Confirm Password</label> -->
+                        <input type="password" class="form-control form-input-custom ms-3 input-text-custom" id="confirmpasswordinput" placeholder="Confirm Password" name="confirmpassword" required>
+                    </div>
+                    <!-- <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="checkinput">
+                        <label class="form-check-label" for="checkinput" style="color: var(--primary-light);">Check me out</label>
+                    </div> -->
+                    <div class="form-text" style="color: var(--primary-light); font-family: var(--secondary-font-family); font-weight: var(--font-weight-medium);">
+                        &nbsp;&nbsp;Already have an account? <a class="hlink-custom" href="/login"><strong>&nbsp;Login</strong></a>
+                    </div><br/>
+                    <button type="submit" class="btn btn-orange-custom" style="width: 100% !important;">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        <div class="col ms-auto" style="flex: 1 1 20%;">
+            <!-- <img src="{{ url_for('static', path='img/login-signup-bg.png') }}" style="height: 100vh; width: 55vw; float: right;"> -->
+        </div>
+    </div>
+{% endblock %}

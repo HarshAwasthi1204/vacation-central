@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block content %}
+    <div style="display: flex;">
+        <div class="col me-auto d-flex justify-content-center align-items-center" style="flex: 1 1 40%; word-wrap: break-word;">
+            <div class="container-fluid" style="margin: 60px;">
+                <h2 style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: var(--primary-light); margin-bottom: 32px;">
+                    Login
+                </h2>
+                <h4 style="font-family: var(--secondary-font-family); font-weight:200; color: var(--primary-light);">
+                    "The world is a book, and those who do not travel read only one page."
+                </h4>
+                <h4 style="font-family: var(--secondary-font-family); font-weight:var(--font-weight-light); color: var(--primary-light); margin-bottom: 24px;">
+                    - St. Augustine
+                </h4>
+                <!-- remove this shit -->
+                <!-- {% if error %}
+                <h6 style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-bold); color: red;">
+                        {{ error }}
+                </h6>
+                {% endif %} -->
+                <!-- up till here -->
+                <form action="{{ url_for('post_login') }}" method="POST" id="login-form">
+                    <div class="mb-3">
+                        <!-- <label for="emailidinput" class="form-label" style="color: var(--primary-light);">Email address</label> -->
+                        <input type="text" class="form-control form-input-custom input-text-custom" id="usernameemailidinput" aria-describedby="usernameemailHelp" placeholder="Email ID or Username" name="username" required>
+                        <!-- <div id="emailHelp" class="form-text" style="color: var(--primary-light);">We'll never share your email with anyone else.</div> -->
+                    </div>
+                    <div class="mb-3">
+                        <!-- <label for="passwordinput" class="form-label" style="color: var(--primary-light);">Password</label> -->
+                        <input type="password" class="form-control form-input-custom input-text-custom" id="passwordinput" placeholder="Password" name="password" required>
+                    </div>
+                    <div class="mb-3 ms-2 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberme" name="rememberme">
+                        <label class="form-check-label" for="rememberme"  style="font-family: var(--secondary-font-family); font-weight: var(--font-weight-normal); color: var(--primary-light);">Remember Me</label>
+                    </div>
+                    <div class="form-text ms-2" style="color: var(--primary-light); font-family: var(--secondary-font-family); font-weight: var(--font-weight-medium);">
+                        Don't have an account? <a class="hlink-custom" href="/signup"><strong>&nbsp;Sign Up</strong></a>
+                    </div><br/>
+                    <button type="submit" class="btn btn-orange-custom" style="width: 100% !important;">Login</button>
+                </form>
+            </div>
+        </div>
+        <div class="col ms-auto" style="background-image: url('static/img/login-signup-bg-upscaled.png'); background-size: cover; background-position: center; height: calc(100vh - 56px); flex: 1 1 60%;">
+            <!-- <img src="{{ url_for('static', path='img/login-signup-bg.png') }}" style="height: 100vh; width: 55vw; float: right;"> -->
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const username = document.getElementById('usernameemailidinput').value;
+        const password = document.getElementById('passwordinput').value;
+        const rememberme = document.getElementById('rememberme');
+
+
+        // Prepare login data as form data
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('password', password);
+        if(rememberme.checked){
+            formData.append('rememberme', 'on');
+        }
+        else{
+            formData.append('rememberme', 'off');
+        }
+        console.log('Login data:', formData.toString());
+
+        try {
+            var accessToken = localStorage.getItem('access_token_'+username);
+            if (!accessToken) {
+                console.log('No access token found, fetching one...');
+                const response = await fetch('/token', {
+                method: 'POST',
+                body: formData,
+                });
+
+                if (response.ok) {
+                const data = await response.json();
+                // Store access token (e.g., in local storage or HttpOnly cookie)
+                
+                localStorage.setItem('access_token_'+username, data.access_token);
+                if(data.refresh_token){
+                    localStorage.setItem('refresh_token_'+username, data.refresh_token);
+                }
+                accessToken = localStorage.getItem('access_token_'+username);
+                // Redirect to the protected area of your application
+                // window.location.href = '/test';
+                } else {
+                // Handle login errors (e.g., display error message to user)
+                const errorData = await response.json();
+                alert('Token fetch failed: ' + errorData.detail);
+                }
+            }
+            if (accessToken) {
+                console.log('Access token found:', accessToken);
+                const headers = {Authorization: `Bearer ${accessToken}` };
+                const response2 = await fetch('/test', { headers });
+
+                if (!response2.ok) {
+                    const errorText = await response2.json();
+                    if (errorText.message === 'Refresh Token') {
+                        localStorage.removeItem('access_token_'+username);
+                        console.log('Access token expired, trying to refresh...');
+                        const refreshToken = localStorage.getItem('refresh_token_'+username);
+                        if (refreshToken) {
+                            const headers2 = {Authorization: `Bearer ${refreshToken}`};
+                            const response3 = await fetch('/refreshtoken', { headers: headers2, method: 'POST'});
+
+                            if (response3.ok) {
+                            const data2 = await response3.json();
+                            // Store access token (e.g., in local storage or HttpOnly cookie)
+                            
+                            localStorage.setItem('access_token_'+username, data2.access_token);
+
+                            const accessToken2 = localStorage.getItem('access_token_'+username);
+                            console.log("New Access Token: ", accessToken2);
+                            const headers1 = {Authorization: `Bearer ${accessToken2}` };
+                            const response4 = await fetch('/test', { headers: headers1 });
+                            if (response4.ok) {
+                                console.log('API Request successful with refreshed token.');
+                                console.log(await response4.json());
+                            }
+                            else{
+                                console.log('API Request failed: ' + await response4.json());
+                            }
+                            // Redirect to the protected area of your application
+                            // window.location.href = '/test';
+                            } else {
+                                // Handle login errors (e.g., display error message to user)
+                                const errorData2 = await response3.json();
+                                localStorage.removeItem('refresh_token_'+username);
+                                alert('Refresh Token failed: ' + errorData2);
+                            }
+                        }
+                        else{
+                            alert('Refresh Token not found');
+                        }
+                    }
+                    else{
+                        localStorage.removeItem('access_token_'+username);
+                        alert('API Request failed: ' + errorText.message);
+                    }
+                }
+                else{
+                    console.log('API Request successful with access token.');
+                    console.log(await response2.json());
+                }
+            } else {
+                alert('Access Token not found. API Request failed.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle other errors (e.g., network issues)
+        }
+        });
+    </script>
+{% endblock %}
