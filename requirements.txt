@@ -1,0 +1,7 @@
+bcrypt==4.2.0
+bson==0.5.10
+fastapi[all]==0.115.0
+passlib[bcrypt]==1.7.4
+pydantic==2.9.2
+pymongo==4.10.1
+python-jose[cryptography]==3.3.0
